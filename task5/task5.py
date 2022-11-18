@@ -1,91 +1,72 @@
 import numpy as np
-import json
+
+def task(dataA,dataB):
+
+  def m(A):
+    n = []
+    for item in A:
+      try:    
+        n.append(int(item))
+      except:
+        m = []
+        for i in range(len(item)):
+          m.append(int(item[i]))
+        n.append(m)
+    return n
+
+  def get_table(n):
+    max = 0
+    for l in n:
+      try:
+        if l > max:
+          max = l
+      except:
+        for i in l:
+          if i > max:
+            max = i
+    table = np.zeros((max,max)) 
+    m = np.zeros(max)
+    for item in n:
+      try:
+        m[item-1] = 1
+        for j in range(max):
+          if m[j] == 0:
+            table[j, item-1] = 0
+          else:
+            table[j, item-1] = 1
+      except:
+        for l in item:
+          m[l-1] = 1
+        for l in item:
+          for j in range(max):
+            if m[j] == 0:
+              table[j, l-1] = 0
+            else:
+              table[j, l-1] = 1
+    return table
 
 
-def parse_str(s_data: str):
-    levels = json.loads(s_data)
-    args = sorted(
-        np.hstack(levels),
-        key=lambda e: int(e)
-    )
-    return levels, args
+  def back_string(a):
+    est = []
 
+    for item in a:
+      try:
+        est.append(str(item + 1))
+      except:
+        m = []
+        for l in item:
+          m.append(str(l + 1))
+        est.append(m)
+    return est
+  dataA = m(dataA)
+  dataB = m(dataB)
+  tableA = get_table(dataA)
+  tableB = get_table(dataB)
+  mergedTable = tableA * tableB + tableA.T * tableB.T
+  answer = []
 
-def construct_matrix(levels: list, args: list[str]):
-    size = len(args)
-    matrix = np.zeros((size, size))
-    passed = []
-
-    for level in levels:
-        if passed:
-            left = np.delete(args, passed)
-        else:
-            left = args
-
-        if type(level) is list:
-            for elem in level:
-                arg = int(elem) - 1
-                for idx in left:
-                    matrix[arg, int(idx) - 1] = 1
-                passed.append(int(elem) - 1)
-        else:
-            elem = level
-            arg = int(elem) - 1
-            for idx in left:
-                matrix[arg, int(idx) - 1] = 1
-            passed.append(int(elem) - 1)
-
-    return np.matrix(matrix)
-
-
-def merge_matrices(matrix_1: np.matrix, matrix_2: np.matrix):
-    return np.multiply(matrix_1, matrix_2) + np.multiply(matrix_1.T, matrix_2.T)
-
-
-def get_differences(matrix: np.matrix):
-    diff = np.array(np.where(matrix == 0)).T
-    upper_diff = np.array([d for d in diff if d[0] < d[1]]) + 1
-    return upper_diff
-
-
-def dumps_answer(array: np.array):
-    return json.dumps([[str(elem) for elem in pair.tolist()] for pair in array])
-
-
-
-
-def task(string_1: str, string_2: str):
-    levels_1, args_1 = parse_str(string_1)
-    levels_2, args_2 = parse_str(string_2)
-
-    matrix_a = construct_matrix(levels_1, args_1)
-    matrix_b = construct_matrix(levels_2, args_2)
-
-    merged_matrix = merge_matrices(matrix_A, matrix_B)
-
-    differences = get_differences(merged_matrix)
-
-    answer = dumps_answer(differences)
-
-    return answer
-
-
-
-
-if __name__ == "__main__":
-    range_A = '["1", ["2","3"],"4", ["5", "6", "7"], "8", "9", "10"]'
-    range_B = '[["3","4"], ["1","2","5"], "7", "6", "9", ["8","10"]]'
-
-    levels_A, args_A = parse_str(range_A)
-    levels_B, args_B = parse_str(range_B)
-
-    matrix_A = construct_matrix(levels_A, args_A)
-    matrix_B = construct_matrix(levels_B, args_B)
-
-    merged_matrix = merge_matrices(matrix_A, matrix_B)
-
-    differences = get_differences(merged_matrix)
-
-    answer = dumps_answer(differences)
-
-    print(answer)
+  for j in range(mergedTable.shape[1]):
+    for i in range(j):
+      if mergedTable[i,j] == 0:
+        answer.append([i,j])
+  return back_string(answer)
