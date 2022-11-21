@@ -1,7 +1,8 @@
-import numpy as np
-
-def task(dataA,dataB):
-
+def task(str1, str2):
+  import json
+  import numpy as np
+  dataA = json.loads(str1)
+  dataB = json.loads(str2)
   def m(A):
     n = []
     for item in A:
@@ -13,7 +14,6 @@ def task(dataA,dataB):
           m.append(int(item[i]))
         n.append(m)
     return n
-
   def get_table(n):
     max = 0
     for l in n:
@@ -44,11 +44,8 @@ def task(dataA,dataB):
             else:
               table[j, l-1] = 1
     return table
-
-
   def back_string(a):
     est = []
-
     for item in a:
       try:
         est.append(str(item + 1))
@@ -64,7 +61,6 @@ def task(dataA,dataB):
   tableB = get_table(dataB)
   mergedTable = tableA * tableB + tableA.T * tableB.T
   answer = []
-
   for j in range(mergedTable.shape[1]):
     for i in range(j):
       if mergedTable[i,j] == 0:
